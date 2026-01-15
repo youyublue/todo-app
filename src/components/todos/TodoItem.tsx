@@ -120,14 +120,14 @@ export function TodoItem({ todo }: TodoItemProps) {
               <span>{format(new Date(todo.reminder_time), 'h:mm a')}</span>
             </div>
           )}
-          
-          {todo.categories && (
-            <Badge 
-              variant="outline" 
+
+          {todo.category && (
+            <Badge
+              variant="outline"
               className="text-xs"
-              style={{ borderColor: todo.categories.color, color: todo.categories.color }}
+              style={{ borderColor: todo.category.color, color: todo.category.color }}
             >
-              {todo.categories.name}
+              {todo.category.name}
             </Badge>
           )}
         </div>

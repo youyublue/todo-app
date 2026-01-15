@@ -15,7 +15,6 @@ interface CustomSelectProps {
   placeholder?: string;
   icon?: React.ReactNode;
   className?: string;
-  getOptionClassName?: (option: CustomSelectOption) => string;
 }
 
 export function CustomSelect({
@@ -25,7 +24,6 @@ export function CustomSelect({
   placeholder,
   icon,
   className,
-  getOptionClassName,
 }: CustomSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);

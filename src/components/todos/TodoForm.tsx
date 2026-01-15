@@ -140,8 +140,6 @@ export function TodoForm({ defaultDate = '', defaultPriority = 'medium' }: TodoF
     );
   }
 
-  const selectedCategory = categories.find(c => c.id === categoryId);
-
   return (
     <>
       <RecurringTaskModal 
@@ -245,11 +243,6 @@ export function TodoForm({ defaultDate = '', defaultPriority = 'medium' }: TodoF
                   ? "bg-primary/10 hover:bg-primary/20"
                   : "text-muted-foreground hover:bg-accent"
               }`}
-              getOptionClassName={(option) => {
-                if (option.value === '') return '';
-                const cat = categories.find((c) => c.id === option.value);
-                return cat ? '' : '';
-              }}
             />
 
             <Button

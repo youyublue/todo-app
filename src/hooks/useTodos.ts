@@ -217,7 +217,7 @@ export const useTodos = create<TodoState>((set, get) => {
         if (!user) throw new Error('User not authenticated');
 
         // Remove non-column fields
-        const { categories, recurrence, ...todoData } = newTodo;
+        const { category, recurrence, ...todoData } = newTodo;
 
         if (recurrence?.mode === 'scheduled' && !todoData.due_date && recurrence.startDate) {
           todoData.due_date = new Date(recurrence.startDate).toISOString();
