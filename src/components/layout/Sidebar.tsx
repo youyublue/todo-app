@@ -1,12 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Calendar, 
-  ListTodo, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  Calendar,
+  ListTodo,
+  LogOut,
   Hash,
-  Star
+  Star,
+  Settings
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useProfile } from '../../hooks/useProfile';
@@ -14,6 +15,7 @@ import { t } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/Button';
 import { ThemeToggle } from './ThemeToggle';
+import { AccountSettingsModal } from '../account/AccountSettingsModal';
 
 interface SidebarProps {
   className?: string;
@@ -23,6 +25,8 @@ interface SidebarProps {
 export function Sidebar({ className, onClose }: SidebarProps) {
   const { signOut, user } = useAuth();
   const { profile, fetchProfile, updateLanguage, isLoading } = useProfile();
+  const [isAccountSettingsOpen, setIsAccountSettingsOpen] = useState(false);
+  const languageValue = profile?.language_preference ?? 'zh-CN';
 
   useEffect(() => {
     if (user) {
@@ -97,7 +101,10 @@ export function Sidebar({ className, onClose }: SidebarProps) {
             </div>
             <div className="flex flex-col overflow-hidden">
               <span className="text-sm font-medium truncate max-w-[100px]">
-                {user?.email?.split('@')[0]}
+                {profile?.full_name || user?.email?.split('@')[0]}
+              </span>
+              <span className="text-xs text-muted-foreground truncate max-w-[100px]">
+                {user?.email}
               </span>
             </div>
           </div>
@@ -116,16 +123,31 @@ export function Sidebar({ className, onClose }: SidebarProps) {
             <option value="en-US">English</option>
           </select>
         </div>
-        
-        <Button 
-          variant="outline" 
-          className="w-full justify-start text-muted-foreground" 
+
+        <Button
+          variant="outline"
+          className="w-full justify-start text-muted-foreground"
+          onClick={() => setIsAccountSettingsOpen(true)}
+        >
+          <Settings className="mr-2 h-4 w-4" />
+          {languageValue === 'zh-CN' ? '账户设置' : 'Account Settings'}
+        </Button>
+
+        <Button
+          variant="outline"
+          className="w-full justify-start text-muted-foreground"
           onClick={() => signOut()}
         >
           <LogOut className="mr-2 h-4 w-4" />
           {t(languageValue, 'signOut')}
         </Button>
       </div>
+
+      <AccountSettingsModal
+        isOpen={isAccountSettingsOpen}
+        onClose={() => setIsAccountSettingsOpen(false)}
+        language={languageValue}
+      />
     </aside>
   );
 }

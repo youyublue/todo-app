@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { Calendar, Trash2, Check, Clock } from 'lucide-react';
+import { Calendar, Trash2, Check, Clock, Edit2 } from 'lucide-react';
 import type { Todo } from '../../types';
 import { cn } from '../../lib/utils';
 import { useProfile } from '../../hooks/useProfile';
@@ -8,17 +8,19 @@ import { t } from '../../lib/i18n';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { useTodos } from '../../hooks/useTodos';
+import { EditTodoModal } from './EditTodoModal';
 
 interface TodoItemProps {
   todo: Todo;
 }
 
 export function TodoItem({ todo }: TodoItemProps) {
-  const { toggleComplete, deleteTodo } = useTodos();
+  const { toggleComplete, deleteTodo, fetchTodos } = useTodos();
   const { profile } = useProfile();
   const language = profile?.language_preference ?? 'zh-CN';
   const [isDeleting, setIsDeleting] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const priorityLabels = {
     low: t(language, 'lowPriority'),
@@ -82,6 +84,14 @@ export function TodoItem({ todo }: TodoItemProps) {
             <Button
               variant="ghost"
               size="icon"
+              className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+              onClick={() => setIsEditModalOpen(true)}
+            >
+              <Edit2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
               onClick={handleDelete}
             >
@@ -132,6 +142,17 @@ export function TodoItem({ todo }: TodoItemProps) {
           )}
         </div>
       </div>
+
+      <EditTodoModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        todo={todo}
+        onUpdate={() => {
+          fetchTodos();
+          setIsEditModalOpen(false);
+        }}
+        language={language}
+      />
     </div>
   );
 }
