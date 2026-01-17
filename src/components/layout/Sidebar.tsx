@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -15,7 +15,6 @@ import { t } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/Button';
 import { ThemeToggle } from './ThemeToggle';
-import { AccountSettingsModal } from '../account/AccountSettingsModal';
 
 interface SidebarProps {
   className?: string;
@@ -24,8 +23,7 @@ interface SidebarProps {
 
 export function Sidebar({ className, onClose }: SidebarProps) {
   const { signOut, user } = useAuth();
-  const { profile, fetchProfile, updateLanguage, isLoading } = useProfile();
-  const [isAccountSettingsOpen, setIsAccountSettingsOpen] = useState(false);
+  const { profile, fetchProfile } = useProfile();
   const languageValue = profile?.language_preference ?? 'zh-CN';
 
   useEffect(() => {
@@ -34,13 +32,12 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     }
   }, [user, fetchProfile]);
 
-  const languageValue = profile?.language_preference ?? 'zh-CN';
-
   const links = [
     { to: '/', icon: LayoutDashboard, label: t(languageValue, 'dashboard') },
     { to: '/today', icon: ListTodo, label: t(languageValue, 'today') },
     { to: '/upcoming', icon: Calendar, label: t(languageValue, 'upcoming') },
     { to: '/important', icon: Star, label: t(languageValue, 'important') },
+    { to: '/settings', icon: Settings, label: t(languageValue, 'settings') },
   ];
 
   return (
@@ -101,7 +98,7 @@ export function Sidebar({ className, onClose }: SidebarProps) {
             </div>
             <div className="flex flex-col overflow-hidden">
               <span className="text-sm font-medium truncate max-w-[100px]">
-                {profile?.full_name || user?.email?.split('@')[0]}
+                {user?.email?.split('@')[0]}
               </span>
               <span className="text-xs text-muted-foreground truncate max-w-[100px]">
                 {user?.email}
@@ -110,28 +107,6 @@ export function Sidebar({ className, onClose }: SidebarProps) {
           </div>
           <ThemeToggle />
         </div>
-
-        <div className="flex items-center justify-between px-2">
-          <span className="text-xs font-medium text-muted-foreground">{t(languageValue, 'language')}</span>
-          <select
-            className="h-8 rounded-md border border-input bg-background px-2 text-xs"
-            value={languageValue}
-            onChange={(e) => updateLanguage(e.target.value as 'zh-CN' | 'en-US')}
-            disabled={!user || isLoading}
-          >
-            <option value="zh-CN">中文</option>
-            <option value="en-US">English</option>
-          </select>
-        </div>
-
-        <Button
-          variant="outline"
-          className="w-full justify-start text-muted-foreground"
-          onClick={() => setIsAccountSettingsOpen(true)}
-        >
-          <Settings className="mr-2 h-4 w-4" />
-          {languageValue === 'zh-CN' ? '账户设置' : 'Account Settings'}
-        </Button>
 
         <Button
           variant="outline"
@@ -142,12 +117,6 @@ export function Sidebar({ className, onClose }: SidebarProps) {
           {t(languageValue, 'signOut')}
         </Button>
       </div>
-
-      <AccountSettingsModal
-        isOpen={isAccountSettingsOpen}
-        onClose={() => setIsAccountSettingsOpen(false)}
-        language={languageValue}
-      />
     </aside>
   );
 }

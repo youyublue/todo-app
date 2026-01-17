@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Flag, Hash } from 'lucide-react';
+import { Flag, Hash } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useCategories } from '../../hooks/useCategories';
-import { useProfile } from '../../hooks/useProfile';
-import { t } from '../../lib/i18n';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
@@ -80,8 +78,6 @@ export function EditTodoModal({ isOpen, onClose, todo, onUpdate, language }: Edi
       setIsLoading(false);
     }
   };
-
-  const selectedCategory = categories.find(c => c.id === categoryId);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={language === 'zh-CN' ? '编辑任务' : 'Edit Task'}>

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { User, Lock } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useProfile } from '../../hooks/useProfile';
-import { t } from '../../lib/i18n';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
@@ -15,7 +14,7 @@ interface AccountSettingsModalProps {
 }
 
 export function AccountSettingsModal({ isOpen, onClose, language }: AccountSettingsModalProps) {
-  const { profile, updateProfile } = useProfile();
+  const { profile, fetchProfile } = useProfile();
   const [isLoading, setIsLoading] = useState(false);
 
   // 用户名表单
@@ -39,7 +38,17 @@ export function AccountSettingsModal({ isOpen, onClose, language }: AccountSetti
 
     setIsLoading(true);
     try {
-      await updateProfile({ full_name: fullName.trim() });
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ full_name: fullName.trim() })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      await fetchProfile();
       toast.success(language === 'zh-CN' ? '用户名更新成功' : 'Name updated successfully');
     } catch (error: any) {
       toast.error(error.message || (language === 'zh-CN' ? '更新失败' : 'Update failed'));

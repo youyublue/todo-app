@@ -16,6 +16,7 @@ const TodayPage = lazy(() => import('./pages/TodayPage').then(module => ({ defau
 const UpcomingPage = lazy(() => import('./pages/UpcomingPage').then(module => ({ default: module.UpcomingPage })));
 const ImportantPage = lazy(() => import('./pages/ImportantPage').then(module => ({ default: module.ImportantPage })));
 const StatsPage = lazy(() => import('./pages/StatsPage').then(module => ({ default: module.StatsPage })));
+const SettingsPage = lazy(() => import('./pages/SettingsPage').then(module => ({ default: module.SettingsPage })));
 const CategoryList = lazy(() => import('./components/categories/CategoryList').then(module => ({ default: module.CategoryList })));
 
 function AppContent() {
@@ -72,6 +73,11 @@ function AppContent() {
           <Route path="/stats" element={
             <Suspense fallback={<div className="flex justify-center p-8"><Spinner /></div>}>
               <StatsPage />
+            </Suspense>
+          } />
+          <Route path="/settings" element={
+            <Suspense fallback={<div className="flex justify-center p-8"><Spinner /></div>}>
+              <SettingsPage />
             </Suspense>
           } />
         </Route>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useTodos } from '../../hooks/useTodos';
+import { useCategories } from '../../hooks/useCategories';
 import { useProfile } from '../../hooks/useProfile';
 import { t } from '../../lib/i18n';
 import { TodoItem } from './TodoItem';
@@ -16,14 +17,15 @@ interface TodoListProps {
   defaultPriority?: TodoPriority;
 }
 
-export function TodoList({ 
-  filter, 
-  hideForm = false, 
+export function TodoList({
+  filter,
+  hideForm = false,
   emptyMessage,
   defaultDate,
   defaultPriority
 }: TodoListProps) {
   const { todos, isLoading, fetchTodos } = useTodos();
+  const { fetchCategories } = useCategories();
   const { profile } = useProfile();
   const language = profile?.language_preference ?? 'zh-CN';
   const fallbackEmptyMessage = t(language, 'emptyNoTasksFound');
@@ -31,7 +33,8 @@ export function TodoList({
 
   useEffect(() => {
     fetchTodos();
-  }, [fetchTodos]);
+    fetchCategories();
+  }, [fetchTodos, fetchCategories]);
 
   const filteredTodos = useMemo(() => {
     if (!filter) return todos;
